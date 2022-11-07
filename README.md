@@ -1,22 +1,89 @@
-# Omnipay Common
+# Omnipay: Telcell
 
-**Core components for the Omnipay PHP payment processing library**
+**Telcell driver for the Omnipay Laravel payment processing library**
 
-[![PHPUnit tests](https://github.com/thephpleague/omnipay-common/actions/workflows/phpunit.yml/badge.svg)](https://github.com/thephpleague/omnipay-common/actions/workflows/phpunit.yml)
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE.md)
-[![Total Downloads][ico-downloads]][link-downloads]
+[![Latest Stable Version](https://poser.pugx.org/arm092/omnipay-telcell/version.png)](https://packagist.org/packages/arm092/omnipay-telcell)
+[![Total Downloads](https://poser.pugx.org/arm092/omnipay-telcell/d/total.png)](https://packagist.org/packages/arm092/omnipay-telcell)
 
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
-processing library for PHP. This package implements common classes required by Omnipay.
+processing library for PHP 5.5+. This package implements Telcell support for Omnipay.
 
-## Documentation
+## Installation
 
-Please see [https://omnipay.thephpleague.com/](https://omnipay.thephpleague.com/) for the installation & usage documentation.
+Omnipay is installed via [Composer](http://getcomposer.org/). To install, simply add it
+to your `composer.json` file:
 
-## Change log
+```json
+{
+    "require": {
+        "arm092/omnipay-telcell": "~1.0"
+    }
+}
+```
 
-Please see [UPGRADE](UPGRADE.md) for more information on how to upgrade to the latest version.
+And run composer to update your dependencies:
+
+    composer update
+
+Or you can simply run
+
+    composer require arm092/omnipay-telcell
+
+## Basic Usage
+
+1. Use Omnipay gateway class:
+
+```php
+    use Omnipay\Omnipay;
+```
+
+2. Initialize Telcell gateway:
+
+```php
+
+    $gateway = Omnipay::create('Telcell');
+    $gateway->setShopId(env('TELCELL_SHOP_ID'));
+    $gateway->setShopKey(env('TELCELL_SHOP_KEY'));
+    $gateway->setLanguage(\App::getLocale()); // Language
+    $gateway->setAmount(200); // Amount to charge
+    $gateway->setDescription(1); // Product description
+    $gateway->setValidDays(1); // Days during which the invoice is valid
+    $gateway->setTransactionId(XXXX); // Transaction ID from your system
+
+```
+
+3. Call purchase, it will automatically redirect to Telcell's hosted page
+
+```php
+
+    $purchase = $gateway->purchase()->send();
+    $purchase->redirect();
+
+```
+
+4. Create a webhook controller to handle the callback request at your `CALLBACK_URL` and catch the webhook as follows
+
+```php
+
+    $gateway = Omnipay::create('Telcell');
+    $gateway->setShopId(env('TELCELL_SHOP_ID'));
+    $gateway->setShopKey(env('TELCELL_SHOP_KEY'));
+    
+    $purchase = $gateway->completePurchase()->send();
+    
+    // Do the rest with $purchase and response with 'OK'
+    if ($purchase->isSuccessful()) {
+        
+        // Your logic
+        
+    }
+    
+    return new Response('OK');
+
+```
+
+For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)
+repository.
 
 ## Support
 
@@ -28,25 +95,5 @@ If you want to keep up to date with release anouncements, discuss ideas for the 
 or ask more detailed questions, there is also a [mailing list](https://groups.google.com/forum/#!forum/omnipay) which
 you can subscribe to.
 
-If you believe you have found a bug, please report it using the [GitHub issue tracker](https://github.com/thephpleague/omnipay-common/issues),
+If you believe you have found a bug, please report it using the [GitHub issue tracker](https://github.com/arm092/omnipay-telcell/issues),
 or better yet, fork the library and submit a pull request.
-
-
-## Security
-
-If you discover any security related issues, please email barryvdh@gmail.com instead of using the issue tracker.
-
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-[ico-version]: https://img.shields.io/packagist/v/omnipay/common.svg?style=flat
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat
-[ico-build]: https://img.shields.io/travis/thephpleague/omnipay-common/master.svg?style=flat
-[ico-downloads]: https://img.shields.io/packagist/dt/omnipay/common.svg?style=flat
-
-[link-packagist]: https://packagist.org/packages/omnipay/common
-[link-travis]: https://travis-ci.org/thephpleague/omnipay-common
-[link-downloads]: https://packagist.org/packages/omnipay/common
-[link-contributors]: ../../contributors
