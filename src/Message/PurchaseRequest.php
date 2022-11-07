@@ -12,20 +12,6 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
  */
 class PurchaseRequest extends AbstractRequest
 {
-
-    /**
-     * Create a new Request
-     *
-     * @param  ClientInterface  $httpClient  A HTTP client to make API calls with
-     * @param  HttpRequest  $httpRequest  A Symfony HTTP request object
-     */
-    public function __construct(ClientInterface $httpClient, HttpRequest $httpRequest)
-    {
-        $this->httpClient  = $httpClient;
-        $this->httpRequest = $httpRequest;
-        $this->initialize(['currency' => '֏']);
-    }
-
     /**
      * Sets the request account ID.
      *
