@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 class PurchaseRequest extends AbstractRequest
 {
     /**
-     * Sets the request account ID.
+     * Sets the shop ID.
      *
      * @param  string  $value
      *
@@ -25,7 +25,7 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * Get the request account ID.
+     * Get the shop ID.
      *
      * @return mixed
      */
@@ -35,7 +35,7 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * Sets the request secret key.
+     * Sets the request shop key.
      *
      * @param  string  $value
      *
@@ -47,7 +47,7 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * Get the request secret key.
+     * Get the request shop key.
      *
      * @return mixed
      */
@@ -78,10 +78,9 @@ class PurchaseRequest extends AbstractRequest
         return $this->getParameter('language');
     }
     
-    
     public function setValidDays($value)
     {
-        return $this->setParameter('valid_days', $value);
+        return $this->setParameter('valid_days', $value ?? 1);
     }
 
     public function getValidDays()
@@ -111,18 +110,23 @@ class PurchaseRequest extends AbstractRequest
         return $this->getParameter('currency') ?? '֏';
     }
 
+    public function getAmount()
+    {
+        return $this->getParameter('amount');
+    }
+
     /**
      * Generate security code for purchase request
      *
-     * @param ...$fields
+     * @param array $fields
      *
      * @return string
      */
-    protected function getTelcellSecurityCode(...$fields)
+    protected function getTelcellSecurityCode($fields)
     {
-        $needToBeHashed = '';
-        foreach ($fields as $field) {
-            $needToBeHashed .= $this->parameters->get($field);
+        $needToBeHashed = $this->getShopKey();
+        foreach ($fields as $value) {
+            $needToBeHashed .= $value;
         }
 
         return hash('md5', $needToBeHashed);
@@ -135,23 +139,24 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getData()
     {
-        $this->validate('shop_key', 'shop_id', 'currency', 'amount', 'description', 'valid_days', 'transactionId');
-        $secretCode = $this->getTelcellSecurityCode('shop_key', 'shop_id', 'currency', 'amount', 'description',
-            'valid_days', 'transactionId');
-
-        return [
-            'action'        => 'PostInvoice ',
+        $this->validate('shop_key', 'shop_id', 'amount', 'description', 'transactionId');
+        $formFields = [
             'issuer'        => $this->getShoptId(),
             'currency'      => $this->getCurrency(),
             'price'         => $this->getAmount(),
             'product'       => $this->getDescription(),
             'issuer_id'     => $this->getTransactionId(),
             'valid_days'    => $this->getValidDays(),
+        ];
+
+        return [
+            ...$formFields,
+            'action'        => 'PostInvoice',
             'lang'          => $this->getLanguage(),
-            'security_code' => $secretCode,
+            'security_code' => $this->getTelcellSecurityCode($formFields),
         ];
     }
-
+    
     /**
      * Send data and return response instance
      *
