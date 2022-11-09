@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Class CompletePurchaseRequest
- * @package Omnipay\Idram\Message
+ * @package Omnipay\Telcell\Message
  */
 class CompletePurchaseRequest extends PurchaseRequest
 {

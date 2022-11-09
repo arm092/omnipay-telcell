@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 /**
  * Class PurchaseRequest
  *
- * @package Omnipay\Idram\Message
+ * @package Omnipay\Telcell\Message
  */
 class PurchaseRequest extends AbstractRequest
 {
@@ -156,7 +156,7 @@ class PurchaseRequest extends AbstractRequest
             'security_code' => $this->getTelcellSecurityCode($formFields),
         ];
     }
-    
+
     /**
      * Send data and return response instance
      *

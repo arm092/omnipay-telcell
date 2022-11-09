@@ -7,7 +7,7 @@ use Omnipay\Common\Message\AbstractResponse;
 
 /**
  * Class CompletePurchaseResponse
- * @package Omnipay\Idram\Message
+ * @package Omnipay\Telcell\Message
  */
 class CompletePurchaseResponse extends AbstractResponse
 {
