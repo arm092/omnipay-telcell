@@ -16,7 +16,7 @@ class CompletePurchaseRequest extends PurchaseRequest
      */
     public function getData()
     {
-        return $this->validateRequest($this->httpRequest->request);
+        return $this->validateRequest(request()->request);
     }
 
     /**
