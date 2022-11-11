@@ -44,7 +44,7 @@ class CompletePurchaseRequest extends PurchaseRequest
         $data['success'] = false;
 
         // Check for required request data
-        if ($requestData->has('invoice_id') &&
+        if ($requestData->has('invoice') &&
             $requestData->has('issuer_id') &&
             $requestData->has('payment_id') &&
             $requestData->has('buyer') &&
@@ -56,15 +56,13 @@ class CompletePurchaseRequest extends PurchaseRequest
 
             // Generate string to hash for verification
             $needTobeHashed = $this->getShopKey().
-                $requestData->get('invoice_id').
+                $requestData->get('invoice').
                 $requestData->get('issuer_id').
                 $requestData->get('payment_id').
-                $requestData->get('buyer').
                 $requestData->get('currency').
                 $requestData->get('sum').
                 $requestData->get('time').
                 $requestData->get('status');
-
             // Check hash against checksum and set success status
             $data['success'] = strtoupper($requestData->get('checksum')) === strtoupper(md5($needTobeHashed));
         }

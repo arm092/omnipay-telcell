@@ -17,7 +17,7 @@ class CompletePurchaseResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        return !empty($this->data['status']) && $this->data['status'] === Gateway::TRANSACTION_STATUS_PAID;
+        return $this->data['success'] && !empty($this->data['status']) && $this->data['status'] === Gateway::TRANSACTION_STATUS_PAID;
     }
 
     /**
